@@ -1,27 +1,30 @@
-hubot-trello
+hubot-trello-ddx
 ============
 
-manage your trello board from hubot
+Manage your trello differential diagnosis board from hubot.
+
+This is forked from the [hubot-trello](https://github.com/hubot-scripts/hubot-trello) plugin. It's based on
+[this blog post](https://danslimmon.wordpress.com/2015/10/19/troubleshooting-chatops-ddx/).
 
 
 ## Installation
 
-Add **hubot-trello** to your `package.json` file:
+Add **hubot-trello-ddx** to your `package.json` file:
 
 ```json
 "dependencies": {
   "hubot": ">= 2.5.1",
   "hubot-scripts": ">= 2.4.2",
-  "hubot-trello": "*"
+  "hubot-trello-ddx": "*"
 }
 ```
 
-OR run `npm install --save hubot-trello`
+OR run `npm install --save hubot-trello-ddx`
 
-Add **hubot-trello** to your `external-scripts.json`:
+Add **hubot-trello-ddx** to your `external-scripts.json`:
 
 ```json
-["hubot-trello"]
+["hubot-trello-ddx"]
 ```
 
 Run `npm install`
