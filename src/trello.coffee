@@ -1,41 +1,53 @@
 # Description:
-#   Manage your Trello Board from Hubot!
+#   Manage your Trello differential diagnosis boards from Hubot
+#
+#   (based on https://github.com/hubot-scripts/hubot-trello by Jared Barboza)
 #
 # Dependencies:
-#   "node-trello": "latest"
+#   "node-trello-ddx": "latest"
 #
 # Configuration:
-#   HUBOT_TRELLO_KEY - Trello application key
-#   HUBOT_TRELLO_TOKEN - Trello API token
-#   HUBOT_TRELLO_BOARD - The ID of the Trello board you will be working with
+#   HUBOT_DDX_KEY - Trello application key
+#   HUBOT_DDX_TOKEN - Trello API token
 #
 # Commands:
-#   hubot trello new "<list>" <name> - Create a new Trello card in the list
-#   hubot trello list "<list>" - Show cards on list
-#   hubot trello move <shortLink> "<list>" - Move a card to a different list
-#
+#   hubot ddx start <problem description> - Start a new DDx board (and update room topic)
+#   hubot ddx link - Echo a link to the actie DDx board
+#   hubot ddx symptom <description> - Create a new DDx symptom
+#   hubot ddx hypo <description> - Create a new DDx hypothesis
+#   hubot ddx test <description> - Create a new DDx test
+#   hubot ddx falsify <hypo_id> - Falsify a DDx hypothesis
+#   hubot ddx finish <test_id> - Mark a DDx test finished
 #
 # Author:
-#   jared barboza <jared.m.barboza@gmail.com>
-
-board = {}
-lists = {}
+#   Dan Slimmon <dan.slimmon@exosite.com>
 
 Trello = require 'node-trello'
 
-trello = new Trello process.env.HUBOT_TRELLO_KEY, process.env.HUBOT_TRELLO_TOKEN
+trello = new Trello process.env.HUBOT_DDX_KEY, process.env.HUBOT_DDX_TOKEN, process.env.HUBOT_DDX_ORGID
 
 # verify that all the environment vars are available
 ensureConfig = (out) ->
-  out "Error: Trello app key is not specified" if not process.env.HUBOT_TRELLO_KEY
-  out "Error: Trello token is not specified" if not process.env.HUBOT_TRELLO_TOKEN
-  out "Error: Trello board ID is not specified" if not process.env.HUBOT_TRELLO_BOARD
-  return false unless (process.env.HUBOT_TRELLO_KEY and process.env.HUBOT_TRELLO_TOKEN and process.env.HUBOT_TRELLO_BOARD)
+  out "Error: Trello app key is not specified" if not process.env.HUBOT_DDX_KEY
+  out "Error: Trello token is not specified" if not process.env.HUBOT_DDX_TOKEN
+  out "Error: Trello org ID is not specified" if not process.env.HUBOT_DDX_ORGID
+  return false unless (process.env.HUBOT_DDX_KEY and process.env.HUBOT_DDX_TOKEN and process.env.HUBOT_DDX_ORGID)
   true
 
 ##############################
 # API Methods
 ##############################
+
+startBoard = (msg, problem_desc) ->
+  msg.reply "Starting DDx..."
+  ensureConfig msg.send
+  boardName = "DDx: " + problem_desc
+  trello.post "/1/boards", {
+    name: boardName,
+    idOrganization: process.env.HUBOT_DDX_ORGID,
+    prefs_permission_level: "org",
+    prefs_comments: "org"
+  }
 
 createCard = (msg, list_name, cardName) ->
   msg.reply "Sure thing boss. I'll create that card for you."
@@ -44,18 +56,6 @@ createCard = (msg, list_name, cardName) ->
   trello.post "/1/cards", {name: cardName, idList: id}, (err, data) ->
     msg.reply "There was an error creating the card" if err
     msg.reply "OK, I created that card for you. You can see it here: #{data.url}" unless err
-
-showCards = (msg, list_name) ->
-  msg.reply "Looking up the cards for #{list_name}, one sec."
-  ensureConfig msg.send
-  id = lists[list_name.toLowerCase()].id
-  msg.send "I couldn't find a list named: #{list_name}." unless id
-  if id
-    trello.get "/1/lists/#{id}", {cards: "open"}, (err, data) ->
-      msg.reply "There was an error showing the list." if err
-      msg.reply "Here are all the cards in #{data.name}:" unless err and data.cards.length == 0
-      msg.send "* [#{card.shortLink}] #{card.name} - #{card.shortUrl}" for card in data.cards unless err and data.cards.length == 0
-      msg.reply "No cards are currently in the #{data.name} list." if data.cards.length == 0 and !err
 
 moveCard = (msg, card_id, list_name) ->
   ensureConfig msg.send
@@ -69,27 +69,18 @@ moveCard = (msg, card_id, list_name) ->
 module.exports = (robot) ->
   # fetch our board data when the script is loaded
   ensureConfig console.log
-  trello.get "/1/boards/#{process.env.HUBOT_TRELLO_BOARD}", (err, data) ->
-    board = data
-    trello.get "/1/boards/#{process.env.HUBOT_TRELLO_BOARD}/lists", (err, data) ->
-      for list in data
-        lists[list.name.toLowerCase()] = list
 
-  robot.respond /trello new ["'](.+)["']\s(.*)/i, (msg) ->
+  robot.respond /ddx start (.+)/i, (msg) ->
     ensureConfig msg.send
-    card_name = msg.match[2]
-    list_name = msg.match[1]
+    problem_desc = msg.match[1]
 
-    if card_name.length == 0
-      msg.reply "You must give the card a name"
+    if problem_desc.length == 0
+      msg.reply "You must give a description of the problem you're diagnosing"
       return
 
-    if list_name.length == 0
-      msg.reply "You must give a list name"
-      return
     return unless ensureConfig()
 
-    createCard msg, list_name, card_name
+    startBoard msg, problem_desc
 
   robot.respond /trello list ["'](.+)["']/i, (msg) ->
     showCards msg, msg.match[1]

@@ -1,26 +1,26 @@
 {
-  "name": "hubot-trello",
+  "name": "hubot-trello-ddx",
   "version": "0.1.1",
-  "description": "manage your trello board from hubot",
+  "description": "manage your trello differential diagnosis board from hubot",
   "main": "index.coffee",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/hubot-scripts/hubot-trello"
+    "url": "https://github.com/danslimmon/hubot-trello-ddx"
   },
   "keywords": [
     "hubot",
     "hubot-scripts",
     "trello"
   ],
-  "author": "Jared Barboza <jared.m.barboza@gmail.com>",
+  "author": "Dan Slimmon <dan.slimmon@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/hubot-scripts/hubot-trello/issues"
+    "url": "https://github.com/danslimmon/hubot-trello-ddx/issues"
   },
-  "homepage": "https://github.com/hubot-scripts/hubot-trello",
+  "homepage": "https://github.com/danslimmon/hubot-trello-ddx",
   "dependencies": {
     "coffee-script": "^1.8.0",
     "node-trello": "^0.1.5"
