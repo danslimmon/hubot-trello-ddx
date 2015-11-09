@@ -35,40 +35,24 @@ Run `npm install`
 Setup the following as environment variables before you run hubot.
 
 ```
-HUBOT_TRELLO_KEY    - Trello application key
-HUBOT_TRELLO_TOKEN  - Trello API token
-HUBOT_TRELLO_BOARD  - The ID of the Trello board you will be working with
+HUBOT_DDX_KEY    - Trello application key
+HUBOT_DDX_TOKEN  - Trello API token
+HUBOT_DDX_ORGID  - The Trello Team (a.k.a. Organization) ID that should be given access to DDx boards
 ```
 
 - To get your key, go to: `https://trello.com/1/appKey/generate`
-- To get your token, go to: `https://trello.com/1/authorize?key=<<your key>>&name=Hubot+Trello&expiration=never&response_type=token&scope=read,write`
-- Figure out what board you want to use, grab it's id from the url `https://trello.com/boards/<<board id>>/<<board name>>`
-
+- To get your token, go to: `https://trello.com/1/authorize?key=<<your key>>&name=Hubot+DDx&expiration=never&response_type=token&scope=read,write`
+- To get your Organization ID, navigate to the Trello organization's Members page and pick the organization ID out of the URL.
 
 ## Sample Interaction
 
 ```
-user1> hubot trello new "to do" my simple task
-Hubot> Sure thing boss. I'll create that card for you.
-Hubot> OK, I created that card for you. You can see it here: http://trello.com/c/<shortLink>
-user1> hubot trello move <shortLink> "doing"
-Hubot> Yep, ok, I moved that card to doing.
-user1> hubot trello list "to do"
-Hubot> user1: Looking up the cards for to do, one sec...
-Hubot> user1: Here are all the cards in To Do
-Hubot> * [<shortLink>] <card_name> - <card_url>
-Hubot> * [<shortLink>] <card_name> - <card_url>
-Hubot> * [<shortLink>] <card_name> - <card_url>
-user1> hubot trello list lists
-Hubot> user1: Here are all the lists on your board.
-Hubot> * to do
-Hubot> * doing
-Hubot> * done
+Geordi: ddx symptom warp engine going full speed, but ship not moving
+Hubot: Created (symp0): warp engine going full speed, but ship not moving
+Beverly: ddx falsify hypo1
+Hubot: Falsified (hypo1): feedback loop between graviton emitter and graviton roaster
+Geordi: ddx finish test1
+Hubot: Marked (test1) finished: reboot the quantum phase allometer
 ```
 
-And you can use a little help command.
-
-```
-user1> trello help
-```
-
+Here's a [sample](https://trello.com/b/3QprmB6W/ddx-tachyon-flux-fubar) of the sort of Trello board this plugin creates. [My blog post](https://danslimmon.wordpress.com/2015/10/19/troubleshooting-chatops-ddx/) should fill you in if you're still not getting it.
